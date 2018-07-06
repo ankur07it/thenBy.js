@@ -1,5 +1,6 @@
 
 var assert = assert || require('chai').assert;
+var expect = require('chai').expect;
 var firstBy = firstBy || require('..');
 var performance = performance || {now: require('performance-now')};
 
@@ -127,6 +128,31 @@ suite('Sorting while managing case sensitivity', function () {
     done();
   });
 });
+suite('Sorting in different cultures', function () {
+    var nameData =  [
+      { id: 2, name: "Säkerhet"},
+      { id: 4, name: "Salvii"},
+      { id: 6, name: "Szeget"},
+      { id: 8, name: "sákerhet"},
+    ];
+  
+    test('Sort by name, default', function (done) {
+      var s = firstBy(function(v) { return v.name });
+      nameData.sort(s);
+      expect(nameData.map(e => e.name)).to.eql(["Salvii", "Szeget", "Säkerhet", "sákerhet"]);
+      done();
+    });
+  
+    test('Sort by name, traditional ignoreCase', function (done) {
+        var s = firstBy(v => v.name, {ignoreCase:true});
+        nameData.sort(s);
+        console.log(nameData.map(n => n.name));
+        expect(nameData.map(e => e.name)).to.eql(["Salvii", "Szeget", "sákerhet", "Säkerhet"]);
+        done();
+      });
+  });
+  
+
 suite('Sorting with property names', function () {
 	var cityData =  [
             { id: 7, name:  "Amsterdam", population: 750000, country: "Netherlands" },
